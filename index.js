@@ -8,7 +8,6 @@ db.query("SELECT username FROM channels", (error, results, fields) => {
     results.forEach(function(results){
       join.push(results['username']);
     });
-    //console.log(join);
 });
 
 var options = {
