@@ -47,6 +47,9 @@ client.on("chat", function (channel, userstate, message, self) {
 
       const args = message.slice().trim().split(/ +/g);
       const command = args.shift();
+
+      var commandName = args[0];
+      var commandValue = args.slice(1).join(" ");
       /*
       
       ALL CHANNELS HAVE ACCESS TO THESE COMMANDS
@@ -54,8 +57,6 @@ client.on("chat", function (channel, userstate, message, self) {
       */
       //Add's a command to the database.
       if (command == "!addcom") {
-        var commandName = args[0];
-        var commandValue = args.slice(1).join(" ");
         db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
           if (results != undefined && results != 0) {
             client.say(channel, "/me >> Command "+ commandName +" already exists!");
@@ -68,8 +69,6 @@ client.on("chat", function (channel, userstate, message, self) {
 
       //Deletes a command from the database.
       if (command == "!delcom") {
-        var commandName = args[0];
-        var commandValue = args.slice(1).join(" ");
         db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
           if (results != undefined && results != 0) {
             db.query("DELETE FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName]);
