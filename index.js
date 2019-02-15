@@ -1,0 +1,62 @@
+var tmi = require("tmi.js");
+var db = require("./db.js");
+var config = require('./config.json');
+
+var join = [];
+
+db.query("SELECT username FROM channels", (error, results, fields) => {
+    results.forEach(function(results){
+      join.push(results['username']);
+    });
+    //console.log(join);
+});
+
+var options = {
+    options: {
+        debug: true
+    },
+    connection: {
+        reconnect: true
+    },
+    identity: {
+        username: config.BotName,
+        password: config.oauth
+    },
+    channels: join
+};
+
+var client = new tmi.client(options);
+
+// Connect the client to the server..
+client.connect();
+
+client.on("chat", function (channel, userstate, message, self) {
+
+    // Don't listen to my own messages..
+    if (self) return;
+
+    //Fetching commands from the database
+    db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, message], function(error, results, fields) {
+      //console.log(results);
+      if (results != undefined && results != 0) {
+        if(message == results[0]['commandname'])
+        {
+          client.say(results[0]['channel'] ,results[0]['value']);
+        }
+      }
+    });
+
+      const args = message.slice().trim().split(/ +/g);
+      const command = args.shift();
+      /*
+      
+      ALL CHANNELS HAVE ACCESS TO THESE COMMANDS
+
+      */
+      //Add's a command to the database.
+      if (command == "!addcom") {
+        var commandName = args[0];
+        var commandValue = args.slice(1).join(" ");
+        db.query("INSERT INTO commands (channel, commandname, value) VALUES (?, ?, ?)", [channel, commandName, commandValue]);
+      }
+});

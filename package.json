@@ -1,0 +1,15 @@
+{
+  "name": "swekbotty",
+  "version": "1.0.0",
+  "description": "Twitch Chat Bot made in NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SwekAap",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "tmi.js": "^1.2.1"
+  }
+}
