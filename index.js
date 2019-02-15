@@ -56,6 +56,27 @@ client.on("chat", function (channel, userstate, message, self) {
       if (command == "!addcom") {
         var commandName = args[0];
         var commandValue = args.slice(1).join(" ");
-        db.query("INSERT INTO commands (channel, commandname, value) VALUES (?, ?, ?)", [channel, commandName, commandValue]);
+        db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
+          if (results != undefined && results != 0) {
+            client.say(channel, "/me >> Command "+ commandName +" already exists!");
+          } else {
+            db.query("INSERT INTO commands (channel, commandname, value) VALUES (?, ?, ?)", [channel, commandName, commandValue]);
+            client.say(channel, "/me >> Command "+ commandName +" has been added!");
+          }
+        });
+      }
+
+      //Deletes a command from the database.
+      if (command == "!delcom") {
+        var commandName = args[0];
+        var commandValue = args.slice(1).join(" ");
+        db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
+          if (results != undefined && results != 0) {
+            db.query("DELETE FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName]);
+            client.say(results[0]['channel'], "/me >> Command "+ commandName +" has been deleted!");
+          } else {
+            client.say(channel, "/me >> Command "+ commandName +" does not exist!");
+          }
+        });
       }
 });
