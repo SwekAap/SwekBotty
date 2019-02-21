@@ -33,7 +33,7 @@ client.on("chat", function (channel, userstate, message, self) {
 
     // Don't listen to my own messages..
     if (self) return;
-
+    
     //Fetching commands from the database
     db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, message], function(error, results, fields) {
       //console.log(results);
@@ -56,7 +56,7 @@ client.on("chat", function (channel, userstate, message, self) {
 
       */
       //Add's a command to the database.
-      if (command == "!addcom") {
+      if (command == "!addcom" && channel == `#${userstate.username}` || command == "!addcom" && userstate.mod == true) {
         db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
           if (results != undefined && results != 0) {
             client.say(channel, "/me >> Command "+ commandName +" already exists!");
@@ -68,7 +68,7 @@ client.on("chat", function (channel, userstate, message, self) {
       }
 
       //Deletes a command from the database.
-      if (command == "!delcom") {
+      if (command == "!delcom" &&  channel == `#${userstate.username}` || command == "!delcom" && userstate.mod == true) {
         db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName], function(error, results, fields) {
           if (results != undefined && results != 0) {
             db.query("DELETE FROM commands WHERE channel = ? AND commandname = ?", [channel, commandName]);
