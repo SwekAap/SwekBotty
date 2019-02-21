@@ -33,10 +33,9 @@ client.on("chat", function (channel, userstate, message, self) {
 
     // Don't listen to my own messages..
     if (self) return;
-    
+
     //Fetching commands from the database
     db.query("SELECT channel, commandname, value FROM commands WHERE channel = ? AND commandname = ?", [channel, message], function(error, results, fields) {
-      //console.log(results);
       if (results != undefined && results != 0) {
         if(message == results[0]['commandname'])
         {
